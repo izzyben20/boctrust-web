@@ -1,26 +1,390 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* ---- Corporate: "The Ledger" ---- */
+  --color-navy: #142b45;
+  --color-navy-deep: #0c1c2f;
+  --color-navy-soft: #24415f;
+  --color-gold: #e5c367;
+  --color-gold-deep: #755a0f;
+  --color-gold-pale: #f6ecd0;
+  --color-paper: #fbf8f1;
+  --color-ivory: #f3ecdd;
+  --color-rule: #d9cfba;
+  --color-ink: #16263a;
+  --color-ink-soft: #4e5d6e;
+  --color-clay: #a4502f;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* ---- Cheetah: "Stride" (from the supplied logo colourways) ---- */
+  --color-stride: #4f7eb4;
+  --color-stride-deep: #33608f;
+  --color-stride-night: #101f33;
+  --color-stride-sky: #cfe0f1;
+  --color-stride-mist: #edf3f9;
+  --color-sun: #e2c36b;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* ---- Savings products (values from the brief and each product's SVG) ---- */
+  --color-fixed: #9381ff;
+  --color-fixed-ink: #3f2fb0;
+  --color-fixed-night: #1d1848;
+  --color-fixed-mist: #efecff;
+  --color-smart: #b47aea;
+  --color-smart-ink: #6a2fa6;
+  --color-smart-mist: #f6eefd;
+  --color-flex: #21be34;
+  --color-flex-ink: #0d6d1a;
+  --color-flex-mist: #e7f8e9;
+  --color-padi: #f79256;
+  --color-padi-ink: #a54a14;
+  --color-padi-mist: #fff5ef;
+
+  --font-display: var(--font-satoshi), "Satoshi", ui-sans-serif, system-ui, sans-serif;
+  /* FH Oscar comes first and takes over as soon as licensed files are added. See app/fonts.ts */
+  --font-sans: "FH Oscar", var(--font-body-fallback), ui-sans-serif, system-ui, sans-serif;
+
+  --breakpoint-xs: 26rem;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-drift: drift 26s linear infinite;
+  --animate-orbit: orbit 40s linear infinite;
+  --animate-flow: flow 1.4s linear infinite;
+  --animate-scan: scan 2.6s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-flash: flash 4.5s ease-out infinite;
+
+  @keyframes drift {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes scan {
+    50% {
+      top: 90%;
+    }
+  }
+  @keyframes float {
+    50% {
+      translate: 0 -10px;
+    }
+  }
+  @keyframes flash {
+    0%,
+    82%,
+    100% {
+      opacity: 0;
+    }
+    86% {
+      opacity: 0.55;
+    }
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+  @keyframes orbit {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  /* The corporate sticky header is 109px tall from this breakpoint. */
+  @media (min-width: 64rem) {
+    html {
+      scroll-padding-top: 7.5rem;
+    }
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus-ring, var(--color-navy));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  button {
+    cursor: pointer;
+  }
+  dialog::backdrop {
+    background: rgb(12 28 47 / 0.6);
+  }
+}
+
+@layer components {
+  /* Display type */
+  /* Type scale. The corporate homepage is the reference: hero, inner-page hero, section, card. */
+  .display-hero {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    font-size: clamp(2.6rem, 5.3vw, 5rem);
+  }
+  .display-page {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    font-size: clamp(2.2rem, 4.2vw, 3.75rem);
+  }
+  .display-md {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    font-size: clamp(1.95rem, 4.5vw, 3.75rem);
+  }
+  .display-sm {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+  }
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .lede {
+    font-size: clamp(1.08rem, 1.6vw, 1.32rem);
+    line-height: 1.5;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 92rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.1rem, 4vw, 3.5rem);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Legal and article prose */
+  .prose-ledger > * + * {
+    margin-top: 1.1em;
+  }
+  .prose-ledger h2,
+  .prose-ledger h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-navy);
+    margin-top: 2.2em;
+  }
+  .prose-ledger h2 {
+    font-size: clamp(1.45rem, 2.4vw, 1.9rem);
+  }
+  .prose-ledger h3 {
+    font-size: 1.2rem;
+  }
+  .prose-ledger ul {
+    display: grid;
+    gap: 0.55em;
+  }
+  .prose-ledger li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .prose-ledger ul li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.6em;
+    height: 2px;
+    background: var(--color-gold-deep);
+  }
+  .prose-ledger a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* react-calendar, rebuilt for Cheetah */
+  .stride-calendar {
+    width: 100%;
+    font-family: var(--font-sans);
+    --cal-accent: var(--color-fixed-ink);
+  }
+  .stride-calendar .react-calendar__navigation {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .stride-calendar .react-calendar__navigation button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-stride-night);
+  }
+  .stride-calendar .react-calendar__navigation button:enabled:hover {
+    background: var(--color-fixed-mist);
+  }
+  .stride-calendar .react-calendar__navigation button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .stride-calendar .react-calendar__month-view__weekdays {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #5a6878;
+    text-transform: uppercase;
+  }
+  .stride-calendar .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+  }
+  .stride-calendar .react-calendar__month-view__weekdays__weekday {
+    padding-block: 0.4rem;
+  }
+  .stride-calendar .react-calendar__tile {
+    min-height: 2.75rem;
+    padding: 0.25rem;
+    font-size: 0.92rem;
+    font-variant-numeric: tabular-nums;
+    border-radius: 0.7rem;
+    color: var(--color-stride-night);
+    transition: background 150ms;
+  }
+  .stride-calendar .react-calendar__year-view .react-calendar__tile,
+  .stride-calendar .react-calendar__decade-view .react-calendar__tile,
+  .stride-calendar .react-calendar__century-view .react-calendar__tile {
+    padding-block: 1rem;
+  }
+  .stride-calendar .react-calendar__tile:enabled:hover {
+    background: var(--color-fixed-mist);
+  }
+  .stride-calendar .react-calendar__tile:disabled {
+    color: #a3adb9;
+    cursor: not-allowed;
+  }
+  .stride-calendar .react-calendar__month-view__days__day--neighboringMonth {
+    color: #5c6877;
+  }
+  .stride-calendar .react-calendar__tile.in-term {
+    background: var(--color-fixed-mist);
+    border-radius: 0;
+  }
+  .stride-calendar .react-calendar__tile.term-edge,
+  .stride-calendar .react-calendar__tile--active {
+    background: var(--cal-accent) !important;
+    color: #fff !important;
+    font-weight: 700;
+    border-radius: 0.7rem;
+  }
+  .stride-calendar .react-calendar__tile--now:not(.term-edge):not(.react-calendar__tile--active) {
+    box-shadow: inset 0 0 0 1.5px var(--color-fixed);
+  }
+
+  /* Custom range input */
+  .amount-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2.75rem;
+    background: transparent;
+    cursor: pointer;
+  }
+  .amount-range::-webkit-slider-runnable-track {
+    height: 0.65rem;
+    border-radius: 99px;
+    background: linear-gradient(to right, var(--color-fixed-ink) var(--fill, 0%), var(--color-fixed-mist) var(--fill, 0%));
+  }
+  .amount-range::-moz-range-track {
+    height: 0.65rem;
+    border-radius: 99px;
+    background: var(--color-fixed-mist);
+  }
+  .amount-range::-moz-range-progress {
+    height: 0.65rem;
+    border-radius: 99px;
+    background: var(--color-fixed-ink);
+  }
+  .amount-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.9rem;
+    height: 1.9rem;
+    margin-top: -0.625rem;
+    border-radius: 50%;
+    background: #fff;
+    border: 6px solid var(--color-fixed-ink);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+  }
+  .amount-range::-moz-range-thumb {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: #fff;
+    border: 6px solid var(--color-fixed-ink);
+  }
+}
+
+/* Above-the-fold entrances. CSS only, so hero content paints without waiting for JavaScript. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--enter-y, 26px));
+  }
+}
+.enter {
+  animation: enter 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* The homepage photograph, cut into panes that rise left to right. */
+.stepped-frame {
+  clip-path: polygon(0 12%, 22% 12%, 22% 6%, 44% 6%, 44% 0, 100% 0, 100% 100%, 0 100%);
+}
+@media (min-width: 64rem) {
+  .stepped-frame {
+    clip-path: polygon(0 30%, 22% 30%, 22% 15%, 44% 15%, 44% 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* Motion hooks driven purely by CSS so they cost no JavaScript */
+@utility hover-lift {
+  transition: transform 500ms var(--ease-out-soft);
+  &:hover {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

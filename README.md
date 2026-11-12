@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Boctrust corporate website and Cheetah
 
-## Getting Started
-
-First, run the development server:
+Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, `motion/react`, `react-calendar`.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build
+npm run lint
+npm test         # fixed deposit calculator
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | Purpose |
+|---|---|
+| `app/(corporate)/` | The corporate site, at its original URLs |
+| `app/cheetah/` | The Cheetah site, with its own layout, navigation and footer |
+| `app/components/` | `corporate/`, `cheetah/`, `shared/`, `brand/`, `ui/`, and the product icons in `svg/` |
+| `config/` | Links, navigation, regulatory claims, consent, site facts |
+| `data/` | Products, FAQs, leadership, legal text, demo blog posts |
+| `lib/` | Calculator, blog data access (the CMS boundary), SEO helpers |
+| `docs/DISCOVERY.md` | Route inventory and evidence for regulatory claims |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Common changes
 
-## Learn More
+| To change | Edit |
+|---|---|
+| App store, login and signup links | `config/links.ts` |
+| Google Tag Manager container | `NEXT_PUBLIC_GTM_ID`, or `config/consent.ts` |
+| A regulatory claim (set `status: "pending"` to remove it everywhere) | `config/regulatory.ts` |
+| Fixed deposit rates and rules | `lib/calculator/fixed-deposit.ts` |
+| Savings product names and copy | `data/cheetah/products.ts` |
+| Connect a CMS to the blog | `lib/blog.ts` and the slug list in `proxy.ts` |
+| Add the licensed FH Oscar font | `app/fonts.ts` (steps are in the comment) |
 
-To learn more about Next.js, take a look at the following resources:
+## Before going live on boctrustmfb.com
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The current site also runs the customer login, dashboard, loan application, password reset and NIBSS callback. Move that application to its own host and set `NEXT_PUBLIC_LEGACY_APP_URL` first (see `.env.example`). Until then those routes have nowhere to go.
