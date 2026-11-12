@@ -1,12 +1,18 @@
-"use client";
+'use client';
 
-import { AnimatePresence } from "motion/react";
-import * as m from "motion/react-m";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import type { NavItem } from "@/config/navigation";
-import { ArrowLeft, ArrowUpRight, ChevronRight, CloseIcon, MenuIcon } from "../../ui/icons";
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { type ReactNode, useRef, useState } from 'react';
+import type { NavItem } from '@/config/navigation';
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  ChevronRight,
+  CloseIcon,
+  MenuIcon,
+} from '../../ui/icons';
 
 type Theme = {
   /** Panel surface and text */
@@ -36,26 +42,18 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
   const [trail, setTrail] = useState<NavItem[]>([]);
   const [direction, setDirection] = useState<1 | -1>(1);
   const dialog = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const el = dialog.current;
-    if (!el) return;
-    if (open && !el.open) {
-      el.showModal();
-      document.documentElement.style.overflow = "hidden";
-    }
-    if (!open && el.open) el.close();
-    if (!open) document.documentElement.style.overflow = "";
-    return () => {
-      document.documentElement.style.overflow = "";
-    };
-  }, [open]);
-
   const pathname = usePathname();
 
+  const openMenu = () => {
+    setOpen(true);
+    dialog.current?.showModal();
+    document.documentElement.style.overflow = 'hidden';
+  };
   const close = () => {
     setOpen(false);
     setTrail([]);
+    dialog.current?.close();
+    document.documentElement.style.overflow = '';
   };
   const forward = (item: NavItem) => {
     setDirection(1);
@@ -68,7 +66,7 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
 
   const level = trail.at(-1);
   const rows = level?.children ?? items;
-  const key = trail.map((t) => t.label).join("/") || "root";
+  const key = trail.map((t) => t.label).join('/') || 'root';
 
   return (
     <>
@@ -77,7 +75,7 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Open menu"
-        onClick={() => setOpen(true)}
+        onClick={openMenu}
         className={`grid size-12 place-items-center rounded-full ${theme.trigger}`}
       >
         <MenuIcon className="size-6" />
@@ -94,7 +92,9 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
       >
         {open && (
           <div className="flex h-full flex-col">
-            <div className={`flex items-center justify-between gap-3 border-b px-5 py-3 ${theme.rule}`}>
+            <div
+              className={`flex items-center justify-between gap-3 border-b px-5 py-3 ${theme.rule}`}
+            >
               {level ? (
                 <button
                   type="button"
@@ -116,7 +116,10 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
               </button>
             </div>
 
-            <nav aria-label={level?.label ?? "Main"} className="relative flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+            <nav
+              aria-label={level?.label ?? 'Main'}
+              className="relative flex-1 overflow-x-hidden overflow-y-auto overscroll-contain"
+            >
               <AnimatePresence mode="wait" initial={false} custom={direction}>
                 <m.div
                   key={key}
@@ -127,7 +130,9 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
                   className="px-5 pt-4 pb-8"
                 >
                   {level && (
-                    <h2 className="mb-2 font-display text-3xl font-black tracking-tight">{level.label}</h2>
+                    <h2 className="mb-2 font-display text-3xl font-black tracking-tight">
+                      {level.label}
+                    </h2>
                   )}
                   <ul>
                     {rows.map((item) => (
@@ -142,19 +147,30 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
                             <ChevronRight className="size-5 shrink-0" />
                           </button>
                         ) : item.external ? (
-                          <a href={item.href} onClick={close} className="flex min-h-16 items-center justify-between gap-4 py-3">
+                          <a
+                            href={item.href}
+                            onClick={close}
+                            className="flex min-h-16 items-center justify-between gap-4 py-3"
+                          >
                             <RowText item={item} muted={theme.muted} />
                             <ArrowUpRight className="size-5 shrink-0" />
                           </a>
                         ) : (
                           <Link
-                            href={item.href ?? "#"}
+                            href={item.href ?? '#'}
                             onClick={close}
-                            aria-current={item.href === pathname ? "page" : undefined}
+                            aria-current={
+                              item.href === pathname ? 'page' : undefined
+                            }
                             className="flex min-h-16 items-center justify-between gap-4 py-3"
                           >
                             <RowText item={item} muted={theme.muted} />
-                            {item.href === pathname && <span aria-hidden className="size-2.5 shrink-0 rounded-full bg-current" />}
+                            {item.href === pathname && (
+                              <span
+                                aria-hidden
+                                className="size-2.5 shrink-0 rounded-full bg-current"
+                              />
+                            )}
                           </Link>
                         )}
                       </li>
@@ -164,7 +180,17 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
               </AnimatePresence>
             </nav>
 
-            {footer && <div className={`border-t px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] ${theme.rule}`}>{footer}</div>}
+            {/* The footer is passed in by each header, so its links carry no close handler of their own. */}
+            {footer && (
+              <div
+                onClick={(e) => {
+                  if ((e.target as Element).closest('a')) close();
+                }}
+                className={`border-t px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] ${theme.rule}`}
+              >
+                {footer}
+              </div>
+            )}
           </div>
         )}
       </dialog>
@@ -175,8 +201,12 @@ export function MobileMenu({ items, theme, logo, footer }: Props) {
 function RowText({ item, muted }: { item: NavItem; muted: string }) {
   return (
     <span>
-      <span className="block font-display text-xl font-bold tracking-tight">{item.label}</span>
-      {item.description && <span className={`block text-sm ${muted}`}>{item.description}</span>}
+      <span className="block font-display text-xl font-bold tracking-tight">
+        {item.label}
+      </span>
+      {item.description && (
+        <span className={`block text-sm ${muted}`}>{item.description}</span>
+      )}
     </span>
   );
 }

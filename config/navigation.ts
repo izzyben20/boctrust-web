@@ -101,7 +101,6 @@ export const CHEETAH_NAV: NavItem[] = [
   },
   { label: "Payments", href: "/cheetah/payments" },
   { label: "Calculator", href: "/cheetah/calculator" },
-  { label: "Security", href: "/cheetah/security" },
   { label: "About Us", href: "/cheetah/about" },
   { label: "FAQs", href: "/cheetah/faqs" },
 ];
